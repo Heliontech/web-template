@@ -1,3 +1,4 @@
+'use server';
 import { AreaGraph } from './area-graph';
 import { BarGraph } from './bar-graph';
 import { PieGraph } from './pie-graph';
@@ -13,18 +14,19 @@ import {
   CardTitle
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useLocale } from '@/hooks/use-locale';
 
-export default function OverViewPage() {
+export default async function OverViewPage() {
+  const { t } = await useLocale('dashboard');
+
   return (
     <PageContainer scrollable>
       <div className="space-y-2">
         <div className="flex items-center justify-between space-y-2">
-          <h2 className="text-2xl font-bold tracking-tight">
-            Dashboard Overview
-          </h2>
+          <h2 className="text-2xl font-bold tracking-tight">{t('overview')}</h2>
           <div className="hidden items-center space-x-2 md:flex">
             <CalendarDateRangePicker />
-            <Button>Download</Button>
+            <Button>{t('download')}</Button>
           </div>
         </div>
         <Tabs defaultValue="overview" className="space-y-4">
