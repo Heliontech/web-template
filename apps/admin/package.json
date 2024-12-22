@@ -42,7 +42,7 @@
     "@radix-ui/react-tabs": "^1.0.4",
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.1.6",
-    "@repo/ui": "workspace:*",
+    "@pt/ui": "workspace:*",
     "@tanstack/react-table": "^8.10.7",
     "@types/node": "20.5.7",
     "@types/react": "18.2.21",
@@ -88,14 +88,15 @@
   },
   "devDependencies": {
     "@faker-js/faker": "^9.0.3",
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
+    "@pt/eslint-config": "workspace:*",
+    "@pt/typescript-config": "workspace:*",
     "@types/sort-by": "^1.2.3",
     "@types/uuid": "^9.0.7",
     "@typescript-eslint/eslint-plugin": "^6.11.0",
     "husky": "^9.0.11",
     "lint-staged": "^15.2.7",
     "prettier": "3.0.3",
-    "prettier-plugin-tailwindcss": "^0.5.14"
+    "prettier-plugin-tailwindcss": "^0.5.14",
+    "@prisma/nextjs-monorepo-workaround-plugin": "^6.0.1"
   }
 }
