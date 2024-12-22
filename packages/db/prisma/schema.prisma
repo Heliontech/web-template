@@ -1,0 +1,369 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
+  binaryTargets   = ["native", "linux-musl-arm64-openssl-1.1.x"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Account {
+  id                       String  @id @default(cuid())
+  user_id                  String  @unique @map("user_id")
+  type                     String
+  provider                 String
+  provider_account_id      String  @map("provider_account_id")
+  refresh_token            String? @db.Text
+  access_token             String? @db.Text
+  expires_at               Int?
+  token_type               String?
+  scope                    String?
+  id_token                 String? @db.Text
+  session_state            String?
+  refresh_token_expires_in Int?
+  user                     User?   @relation(fields: [user_id], references: [id])
+
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@unique([provider, provider_account_id])
+  @@index([user_id])
+}
+
+model Session {
+  id            String   @id @default(cuid())
+  session_token String   @unique @map("session_token")
+  user_id       String   @map("user_id")
+  expires       DateTime
+  user          User     @relation(fields: [user_id], references: [id])
+
+  created_at DateTime @default(now()) @map("created_at")
+  updated_at DateTime @updatedAt @map("updated_at")
+
+  @@index([user_id])
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model User {
+  id             String    @id @default(cuid())
+  phone          String?   @unique
+  name           String?
+  username       String?   @unique
+  email          String?   @unique
+  email_verified DateTime? @map("email_verified")
+  image          String?   @db.Text
+
+  description String?  @db.Text
+  created_at  DateTime @default(now()) @map("created_at")
+  updated_at  DateTime @updatedAt @map("updated_at")
+
+  accounts      Account[]
+  sessions      Session[]
+  roles         RolesOnUsers[]
+  post_comments PostComments[]
+  post_likes    PostLikes[]
+  products      Product[]
+}
+
+// Permission examples
+// {
+//   name: "Create Product",
+//   code: "product:create",
+//   type: "api"
+// }
+// {
+//   name: "View Admin Dashboard",
+//   code: "dashboard:view",
+//   type: "ui"
+// }
+model Permission {
+  id          String               @id @default(cuid())
+  name        String               @unique
+  code        String               @unique // e.g., "product:create", "user:read"
+  description String?              @db.Text
+  type        String // "ui" or "api"
+  created_at  DateTime             @default(now())
+  updated_at  DateTime             @updatedAt
+  roles       RolesOnPermissions[]
+}
+
+model Role {
+  id            String               @id @default(cuid())
+  name          String               @db.Char(100)
+  description   String?              @db.Text
+  created_by    String
+  created_at    DateTime             @default(now())
+  last_modifier String?
+  updated_at    DateTime             @default(now())
+  users         RolesOnUsers[]
+  permissions   RolesOnPermissions[]
+}
+
+// Role: NormalUser, Operator, Admin
+model RolesOnUsers {
+  user        User     @relation(fields: [user_id], references: [id])
+  user_id     String
+  role        Role     @relation(fields: [role_id], references: [id])
+  role_id     String
+  assigned_at DateTime @default(now())
+  assigned_by String
+
+  @@id([user_id, role_id])
+}
+
+model RolesOnPermissions {
+  role          Role       @relation(fields: [role_id], references: [id])
+  role_id       String
+  permission    Permission @relation(fields: [permission_id], references: [id])
+  permission_id String
+  created_at    DateTime   @default(now())
+  created_by    String
+
+  @@id([role_id, permission_id])
+  @@index([permission_id])
+  @@index([role_id])
+}
+
+model ProductCategory {
+  id          String   @id @default(cuid())
+  name        String
+  description String?  @db.Text
+  created_at  DateTime @default(now())
+  updated_at  DateTime @default(now())
+}
+
+enum ProductStatus {
+  draft //Initial stage where product details are being prepared.
+  published // product is ready to be sold
+  pending // Approval: Awaiting approval to be listed.
+  approved // Ready to be listed for sale. with description
+  active //Available for Sale: The product is live and available for purchase.
+  // for Ecommerce
+  // Discounted // Temporarily offered at a reduced price.
+  //Low_Stock // Inventory is running low.
+  //Out_of_Stock // No inventory available.
+  //Presale // Can be ordered but will be delivered later.
+  offline // Permanently removed from sale.
+}
+
+model Product {
+  id             String                 @id @default(cuid())
+  name           String
+  status         String
+  description    String?                @db.Text
+  score          Decimal?               @db.Decimal(10, 2)
+  original_price Decimal?               @db.Decimal(10, 2)
+  offer_price    Decimal?               @db.Decimal(10, 2)
+  image          String?
+  category       String
+  user_id        String
+  user           User                   @relation(fields: [user_id], references: [id])
+  created_at     DateTime               @default(now())
+  updated_at     DateTime               @default(now())
+  // colors, sizes
+  specifications ProductSpecification[]
+  // one product has many inventories
+  // different specifications could have different inventories
+  inventories    ProductInventory[]
+  images         ProductImages[]
+  shipping       Json?
+  return_policy  String?
+  sold_count     Int?                   @default(0)
+  click_count    Int?                   @default(0)
+  PostProducts   PostProducts[]
+}
+
+// use template -> save as product specification
+// product A
+// specification A: image, color, red, 100.00, 10
+// specification B: image, color, blue, 100.00, 10
+model ProductSpecification {
+  id               String            @id @default(cuid())
+  spec_name        String?
+  sku              String?
+  // each specification maybe have own image(customization)
+  // Color:Red;Size:XL;Material:Leather
+  spec_combination String
+  // name               String // size, color, material, etc
+  // value              String // XL, red, , etc
+  // primary price
+  original_price   Decimal?          @db.Decimal(10, 2)
+  // selling_price
+  // at the beginning, selling_price = price(offered price)
+  // user could change it when publishes this product specification(variant)
+  selling_price    Decimal?          @db.Decimal(10, 2)
+  is_primary       Boolean? // hot, best sell
+  // Draft, Published
+  // Default is Draft
+  status           ProductStatus?
+  description      String?           @db.Text
+  product_id       String
+  product          Product           @relation(fields: [product_id], references: [id])
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @default(now())
+  // Each product sepecification has its own inventory
+  inventory        ProductInventory?
+  images           ProductImages[]
+
+  sold_count  Int? @default(0)
+  click_count Int? @default(0)
+
+  @@unique([product_id, spec_combination])
+}
+
+// 1. Product's different specifications maybe have different prices.
+// 2. The price will override product's original price
+// model ProductSpecificationsOnSpecifications {
+//   production_specification    ProductSpecification @relation(fields: [production_specification_id], references: [id])
+//   production_specification_id String
+//   specification               Specification        @relation(fields: [specification_id], references: [id])
+//   specification_id            String
+//   created_at                  DateTime             @default(now())
+//   updated_at                  DateTime             @default(now())
+
+//   @@id([production_specification_id, specification_id])
+// }
+
+// 1. one product has many specifications
+// 2. each specification has its own inventory
+// 3. It will be used in store application
+model ProductInventory {
+  id                        String               @id @default(cuid())
+  product_id                String
+  product                   Product              @relation(fields: [product_id], references: [id])
+  product_specification_id  String               @unique
+  product_specification     ProductSpecification @relation(fields: [product_specification_id], references: [id], onDelete: Cascade)
+  // Color:Red,Size:L
+  // for searching
+  specification_combination String
+  quantity                  Int                  @default(0)
+  description               String?              @db.Text
+  created_at                DateTime             @default(now())
+  updated_at                DateTime             @default(now())
+  last_modifier             String?
+
+  @@index([product_id, product_specification_id])
+}
+
+// One product has many images: front and back etc
+// Product Gallery
+model ProductImages {
+  id         String   @id @default(cuid())
+  is_header  Boolean  @default(false)
+  url        String
+  index      Int?
+  // track upload time
+  created_at DateTime @default(now())
+
+  // sizes:
+  // colors
+  // inventory
+  product                  Product?              @relation(fields: [product_id], references: [id])
+  product_id               String?
+  product_specification_id String?
+  product_specification    ProductSpecification? @relation(fields: [product_specification_id], references: [id])
+}
+
+enum PostStatus {
+  draft
+  published
+}
+
+model Post {
+  id      String     @id @default(cuid())
+  title   String
+  content String     @db.Text
+  status  PostStatus @default(draft)
+
+  view_count    Int @default(0)
+  like_count    Int @default(0)
+  share_count   Int @default(0)
+  comment_count Int @default(0)
+
+  created_at   DateTime  @default(now())
+  updated_at   DateTime  @updatedAt
+  published_at DateTime?
+
+  products PostProducts[]
+  tags     PostsOnTags[]
+  comments PostComments[]
+  likes    PostLikes[]
+}
+
+model PostProducts {
+  id         String  @id @default(cuid())
+  post       Post    @relation(fields: [post_id], references: [id])
+  post_id    String
+  product    Product @relation(fields: [product_id], references: [id])
+  product_id String
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([post_id, product_id])
+}
+
+// one-to-many
+// one post has many comments
+model PostComments {
+  id         String   @id @default(cuid())
+  content    String   @db.Text
+  post       Post     @relation(fields: [post_id], references: [id])
+  post_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  @@unique([post_id, user_id])
+}
+
+// one-to-many
+model PostLikes {
+  id         String   @id @default(cuid())
+  post       Post     @relation(fields: [post_id], references: [id])
+  post_id    String
+  user       User     @relation(fields: [user_id], references: [id])
+  user_id    String
+  created_at DateTime @default(now())
+
+  @@unique([post_id, user_id])
+}
+
+// many-to-many
+// one post has many tags
+// one tag has many posts
+model Tag {
+  id         String        @id @default(cuid())
+  name       String        @unique
+  posts      PostsOnTags[]
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+}
+
+model PostsOnTags {
+  post       Post     @relation(fields: [post_id], references: [id])
+  post_id    String
+  tag        Tag      @relation(fields: [tag_id], references: [id])
+  tag_id     String
+  created_at DateTime @default(now())
+
+  @@id([post_id, tag_id])
+  @@index([tag_id])
+  @@index([post_id])
+}

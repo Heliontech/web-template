@@ -1,0 +1,30 @@
+{
+  "name": "@pt/db",
+  "version": "1.0.0",
+  "private": true,
+  "main": "./index.ts",
+  "types": "./index.ts",
+  "scripts": {
+    "analyze": "prisma generate --no-hints",
+    "build": "prisma generate --no-hints",
+    "clean": "rm -rf .turbo node_modules",
+    "lint": "biome check .",
+    "format": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "db:migrate": "prisma migrate dev",
+    "db:migrate:deploy": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "generate": "prisma generate",
+    "studio": "prisma studio"
+  },
+  "dependencies": {
+    "@pt/logger": "workspace:*",
+    "@pt/typescript-config": "workspace:*",
+    "@prisma/client": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22",
+    "prisma": "^6.0.1",
+    "typescript": "^5"
+  }
+}

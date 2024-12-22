@@ -1,0 +1,10 @@
+{
+  "extends": "@pt/typescript-config/base.json",
+  "compilerOptions": {
+    "composite": true,
+    "incremental": true,
+    "tsBuildInfoFile": "node_modules/.cache/tsbuildinfo.json"
+  },
+  "include": ["*.ts", "prisma", "src"],
+  "exclude": ["node_modules"]
+}
