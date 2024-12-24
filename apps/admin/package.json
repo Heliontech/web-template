@@ -8,7 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "format": "prettier . --write",
-    "prepare": "husky"
+    "prepare": "husky",
+    "db:push": "prisma db push --schema=../../packages/db/prisma/schema.prisma",
+    "db:generate": "prisma generate --schema=../../packages/db/prisma/schema.prisma"
   },
   "lint-staged": {
     "**/*": [
@@ -43,6 +45,8 @@
     "@radix-ui/react-toast": "^1.1.5",
     "@radix-ui/react-tooltip": "^1.1.6",
     "@pt/ui": "workspace:*",
+    "@pt/db": "workspace:*",
+    "@auth/prisma-adapter": "^2.7.4",
     "@tanstack/react-table": "^8.10.7",
     "@types/node": "20.5.7",
     "@types/react": "18.2.21",
