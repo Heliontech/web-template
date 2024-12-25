@@ -67,7 +67,8 @@
     "./use-mobile": "./src/hooks/use-mobile.ts",
     "./use-size-observer": "./src/hooks/use-size-observer.ts",
     "./cn": "./src/utils/cn.ts",
-    "./providers/theme": "./src/providers/theme.tsx"
+    "./providers/theme": "./src/providers/theme.tsx",
+    "./avatar-circles": "./src/components/avatar-circles.tsx"
   },
   "devDependencies": {
     "@pt/eslint-config": "workspace:*",
