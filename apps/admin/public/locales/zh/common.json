@@ -1,3 +1,22 @@
 {
-  "sign_in": "登录"
+  "sign_in": "登录",
+  "welcome_back": "欢迎回来",
+  "choose_sign_in_method": "选择登录方式",
+  "email": "邮箱",
+  "send_magic_link": "发送魔法链接",
+  "check_email": "检查你的邮箱",
+  "or_continue_with": "或者继续使用",
+  "continue_with_github": "使用 Github 登录",
+  "continue_with_google": "使用 Google 登录",
+  "with_password": "使用密码登录",
+  "with_email": "使用邮箱登录",
+  "no_account": "没有账号？",
+  "password": "密码",
+  "continue_with_email": "使用邮箱登录",
+  "login": "登录",
+  "by_continuing": "继续使用，即表示您同意我们的",
+  "terms": "条款",
+  "and": "和",
+  "privacy": "隐私政策",
+  "sign_up": "注册"
 }

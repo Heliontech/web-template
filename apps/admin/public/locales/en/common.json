@@ -1,3 +1,22 @@
 {
-  "sign_in": "Sign In"
+  "sign_in": "Sign In",
+  "welcome_back": "Welcome back",
+  "choose_sign_in_method": "Choose sign in method",
+  "email": "Email",
+  "send_magic_link": "Send magic link",
+  "check_email": "Check your email",
+  "or_continue_with": "Or continue with",
+  "continue_with_github": "Continue with Github",
+  "continue_with_google": "Continue with Google",
+  "with_password": "With password",
+  "with_email": "With email",
+  "no_account": "No account? ",
+  "password": "Password",
+  "continue_with_email": "Continue with email",
+  "login": "Login",
+  "by_continuing": "By continuing, you agree to our",
+  "terms": "Terms",
+  "and": "and",
+  "privacy": "Privacy Policy",
+  "sign_up": "Sign Up"
 }
