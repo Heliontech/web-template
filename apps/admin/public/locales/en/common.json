@@ -18,5 +18,13 @@
   "terms": "Terms",
   "and": "and",
   "privacy": "Privacy Policy",
-  "sign_up": "Sign Up"
+  "sign_up": "Sign Up",
+  "create_account": "Create account",
+  "enter_details_below": "Enter your details below to create an account",
+  "already_have_account": "Already have an account? ",
+  "creating_account": "Creating account...",
+  "invalid_email": "Invalid email address",
+  "invalid_username": "Username must be at least 3 characters",
+  "invalid_password": "Password must be at least 6 characters, contain at least one uppercase letter, one lowercase letter, and one number",
+  "passwords_do_not_match": "Passwords don't match"
 }

@@ -18,5 +18,13 @@
   "terms": "条款",
   "and": "和",
   "privacy": "隐私政策",
-  "sign_up": "注册"
+  "sign_up": "注册",
+  "create_account": "创建账号",
+  "enter_details_below": "在下方输入您的详细信息以创建账号",
+  "already_have_account": "已有账号？",
+  "creating_account": "创建账号中...",
+  "invalid_email": "邮箱地址无效",
+  "invalid_username": "用户名必须至少3个字符",
+  "invalid_password": "密码必须至少6个字符，包含至少一个大写字母，一个小写字母和一个数字",
+  "passwords_do_not_match": "密码不匹配"
 }
