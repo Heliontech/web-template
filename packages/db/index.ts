@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
@@ -23,3 +23,28 @@ if (process.env.NODE_ENV !== "production")
   globalForPrisma.prisma ?? createPrismaClient();
 
 export * from "@prisma/client";
+
+export function catchPrismaError(error: unknown, message: string) {
+  if (error instanceof Prisma.PrismaClientKnownRequestError) {
+    // Handle specific Prisma errors
+    if (error.code === "P2002") {
+      return {
+        meta: {
+          code: 400,
+          message: message || "Failed to execute operation, please try again.",
+        },
+      };
+    }
+  }
+
+  // error message is not from Prisma
+  return {
+    meta: {
+      code: 500,
+      message:
+        error instanceof Error
+          ? error.message
+          : "Failed to execute operation, please contact support.",
+    },
+  };
+}
