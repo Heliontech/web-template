@@ -17,13 +17,16 @@ const createPrismaClient = () => {
   });
 };
 
+// export prisma instance
 export const prisma = globalForPrisma.prisma ?? createPrismaClient();
 
 if (process.env.NODE_ENV !== "production")
   globalForPrisma.prisma ?? createPrismaClient();
 
+// export prisma client
 export * from "@prisma/client";
 
+// export catchPrismaError function
 export function catchPrismaError(error: unknown, message: string) {
   if (error instanceof Prisma.PrismaClientKnownRequestError) {
     // Handle specific Prisma errors
