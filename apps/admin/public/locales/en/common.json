@@ -11,6 +11,7 @@
   "with_password": "With password",
   "with_email": "With email",
   "no_account": "No account? ",
+  "Password": "Password",
   "password": "Password",
   "continue_with_email": "Continue with email",
   "login": "Login",
@@ -26,5 +27,7 @@
   "invalid_email": "Invalid email address",
   "invalid_username": "Username must be at least 3 characters",
   "invalid_password": "Password must be at least 6 characters, contain at least one uppercase letter, one lowercase letter, and one number",
-  "passwords_do_not_match": "Passwords don't match"
+  "passwords_do_not_match": "Passwords don't match",
+  "password_confirmation": "Password confirmation",
+  "username": "Username"
 }
