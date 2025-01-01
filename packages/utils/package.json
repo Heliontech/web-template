@@ -1,0 +1,13 @@
+{
+	"name": "@pt/utils",
+	"version": "0.0.1",
+	"main": "./index.ts",
+	"devDependencies": {
+		"@types/node": "^22.10.2",
+		"@pt/typescript-config": "workspace:*"
+	},
+	"scripts": {
+		"type-check": "tsc --noEmit"
+	},
+	"types": "./**/.tsx"
+}
