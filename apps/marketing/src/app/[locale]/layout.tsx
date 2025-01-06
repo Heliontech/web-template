@@ -3,8 +3,8 @@ import { NextIntlClientProvider } from "next-intl";
 import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import localFont from "next/font/local";
-// import "./globals.css";
 import { getMessages } from "next-intl/server";
+import { Footer } from "@/components/common/Footer";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,8 +29,6 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: { locale: string };
 }>) {
-  console.log({ locale });
-  console.log({ "routing.locales": routing.locales });
   // Ensure that the incoming `locale` is valid
   if (!routing.locales.includes(locale)) {
     notFound();
@@ -53,7 +51,9 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <NextIntlClientProvider messages={messages} locale={locale}>
-          {children}
+          <div>Nav bar is in progress</div>
+          <main className='min-h-screen'>{children}</main>
+          <Footer />
         </NextIntlClientProvider>
       </body>
     </html>
