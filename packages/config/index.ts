@@ -12,7 +12,7 @@ export const config = {
     email: "hello@pt.com",
   },
   ui: {
-    sass: {
+    saas: {
       enabled: false,
     },
   },

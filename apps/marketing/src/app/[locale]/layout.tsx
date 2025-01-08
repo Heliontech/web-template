@@ -1,11 +1,10 @@
 import type { Metadata } from "next";
-import { NextIntlClientProvider } from "next-intl";
-import { notFound } from "next/navigation";
-import { routing } from "@/i18n/routing";
 import localFont from "next/font/local";
 import { getMessages } from "next-intl/server";
 import { Footer } from "@/components/common/Footer";
 import { i18n } from "@pt/config";
+import { NavBar } from "@/components/common/NavBar";
+import Providers from "@/components/providers";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -18,6 +17,16 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
+// generateMetadata is used to generate metadata for the page
+// conflict with the metadata in the root layout
+// only accept one
+// export const metadata: Metadata = {
+//   title: {
+//     absolute: "portal template marketing - Application",
+//     default: "portal template marketing - Application",
+//     template: "%s | portal template marketing - Application",
+//   },
+// };
 export async function generateMetadata({
   params,
 }: {
@@ -80,32 +89,18 @@ export default async function LocaleLayout({
   children: React.ReactNode;
   params: { locale: string };
 }>) {
-  // Ensure that the incoming `locale` is valid
-  if (!routing.locales.includes(locale)) {
-    notFound();
-  }
-
-  // Providing all messages to the client
-  // side is the easiest way to get started
-  const messages = await getMessages();
-  // let messages;
-  // try {
-  //   messages = require(`@pt/i18n/${locale}.json`);
-  //   console.log({ messages });
-  // } catch (error) {
-  //   throw new Error(`Missing translations for locale: "${locale}"`);
-  // }
-
   return (
     <html lang={locale} suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <NextIntlClientProvider messages={messages} locale={locale}>
-          <div>Nav bar is in progress</div>
-          <main className='min-h-screen'>{children}</main>
-          <Footer />
-        </NextIntlClientProvider>
+        <Providers locale={locale}>
+          <>
+            <NavBar />
+            <main className='min-h-screen'>{children}</main>
+            <Footer />
+          </>
+        </Providers>
       </body>
     </html>
   );
