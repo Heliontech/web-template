@@ -6,6 +6,8 @@ export default createMiddleware({
   // Prevent infinite redirects by setting defaultLocale
   defaultLocale: "en",
   locales: ["en", "zh"],
+  // if not foun does not work, add this line
+  // localeDetection: false,
 });
 
 export const config = {
