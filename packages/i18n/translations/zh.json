@@ -134,14 +134,14 @@
       "confirm": "Confirm"
     },
     "menu": {
-      "blog": "Blog",
-      "changelog": "Changelog",
-      "contact": "Contact",
-      "dashboard": "Dashboard",
-      "docs": "Docs",
-      "faq": "FAQ",
-      "login": "Login",
-      "pricing": "Pricing"
+      "blog": "博客",
+      "changelog": "更新日志",
+      "contact": "联系我们",
+      "dashboard": "仪表盘",
+      "docs": "文档",
+      "faq": "常见问题",
+      "login": "登录",
+      "pricing": "定价"
     },
     "tableOfContents": {
       "title": "On this page"
