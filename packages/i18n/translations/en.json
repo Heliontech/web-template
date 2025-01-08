@@ -121,7 +121,8 @@
 	},
 	"blog": {
 		"description": "Read the latest news from our company",
-		"title": "My awesome blog"
+		"title": "My awesome blog",
+		"posts": []
 	},
 	"changelog": {
 		"description": "Stay up to date with the latest changes in our product.",
