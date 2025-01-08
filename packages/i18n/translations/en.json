@@ -3,6 +3,17 @@
 		"welcome": "Welcome!",
 		"hello": "Hello"
 	},
+	"metadata": {
+		"title": "Portal template - marketing",
+		"description": "A powerful marketing website that helps you better broadcast and improve productivity",
+		"keywords": "Marketing, Next.js, Productivity Tools, SaaS Application, Official Website"
+	},
+	"404": {
+		"somethingMissing": "Page not found",
+		"goBack": "Go back",
+		"backHome": "Back home",
+		"desc": "Sorry, the page you are looking for doesn&apos;t exist or has been moved."
+	},
 	"app": {
 		"menu": {
 			"accountSettings": "Account settings",

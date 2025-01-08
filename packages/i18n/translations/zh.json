@@ -3,6 +3,17 @@
     "welcome": "欢迎!",
     "hello": "你好，世界！"
   },
+  "metadata": {
+    "title": "Portal template - marketing",
+    "description": "A powerful marketing website that helps you better broadcast and improve productivity",
+    "keywords": "Marketing, Next.js, Productivity Tools, SaaS Application, Official Website"
+  },
+  "404": {
+    "somethingMissing": "未找到页面",
+    "goBack": "返回",
+    "backHome": "返回首页",
+    "desc": "抱歉，您访问的页面不存在或已被移动。"
+  },
   "app": {
     "menu": {
       "accountSettings": "Account settings",
