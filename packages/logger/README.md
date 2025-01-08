@@ -22,3 +22,18 @@ npm install pino pino-pretty pino-http
 - pino-http is a middleware for logging http requests
 
 ## Usage
+
+```typescript
+import { logger } from "@pt/logger";
+
+logger.info("Hello world");
+logger.error("Something went wrong");
+logger.warn("This is a warning");
+logger.debug("This is a debug message");
+```
+
+## Reference
+
+- log to sentry
+- log to elasticsearch
+- log to file system
