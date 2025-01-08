@@ -1,5 +1,7 @@
 import pino from "pino";
 
+const isDev = process.env.NODE_ENV === "development";
+
 // Custom log levels
 const levels = {
   emerg: 80,
@@ -14,7 +16,7 @@ const levels = {
 
 // Base logger configuration
 const config = {
-  level: process.env.NODE_ENV === "development" ? "debug" : "info",
+  level: isDev ? "debug" : "info",
   customLevels: levels,
   formatters: {
     level: (label: string) => {
@@ -50,18 +52,18 @@ const config = {
     remove: true,
   },
   // Development formatting
-  ...(process.env.NODE_ENV === "development"
+  ...(isDev
     ? {
         transport: {
-          target: "pino-pretty",
+          target: "pino-pretty", // development uses pretty output for reading
           options: {
-            colorize: true,
+            colorize: true, // colorize output
             ignore: "pid,hostname",
-            translateTime: "SYS:standard",
+            translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
           },
         },
       }
-    : {}),
+    : {}), // production uses json output directly
 };
 
 // Create base logger
@@ -90,7 +92,7 @@ class Logger {
   private logWithContext(
     level: keyof typeof levels,
     message: string,
-    context?: Record<string, unknown>,
+    context?: Record<string, unknown>
   ) {
     const mergedContext = { ...this.defaultContext, ...context };
     this.logger[level]({ ...mergedContext, msg: message });
@@ -132,7 +134,7 @@ class Logger {
     req: Request,
     status: number,
     duration: number,
-    context?: Record<string, unknown>,
+    context?: Record<string, unknown>
   ) {
     const url = new URL(req.url);
     this.info("API Response", {
