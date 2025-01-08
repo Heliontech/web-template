@@ -3,6 +3,16 @@ export const i18n = {
   defaultLocale: "en",
   locales: ["en", "zh"],
   localeCookieName: "@pt/i18n",
+  localesWithLabel: [
+    {
+      locale: "en",
+      label: "English",
+    },
+    {
+      locale: "zh",
+      label: "中文",
+    },
+  ],
 };
 
 export const config = {
