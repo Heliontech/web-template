@@ -22,7 +22,7 @@ export function Hero() {
         </div>
 
         <h1 className='mx-auto max-w-3xl text-balance font-bold text-5xl lg:text-7xl'>
-          Your revolutionary Next.js SaaS
+          Your revolutionary SaaS marketing application
         </h1>
 
         <p className='mx-auto mt-4 max-w-lg text-balance text-foreground/60 text-lg'>

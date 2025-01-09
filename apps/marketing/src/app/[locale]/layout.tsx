@@ -95,11 +95,11 @@ export default async function LocaleLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Providers locale={locale}>
-          <>
+          <div className='min-h-screen flex flex-col'>
             <NavBar />
-            <main className='min-h-screen'>{children}</main>
+            <main className='flex-1'>{children}</main>
             <Footer />
-          </>
+          </div>
         </Providers>
       </body>
     </html>
