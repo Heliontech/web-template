@@ -56,7 +56,7 @@ export function NavBar() {
     },
     {
       label: t("common.menu.faq"),
-      href: "/#faq",
+      href: "/home#faq",
     },
     {
       label: t("common.menu.blog"),
