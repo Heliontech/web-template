@@ -5,8 +5,9 @@ import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box'
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
 import { NormalUser } from '@/constants/data';
-import { columns } from '../user-tables/columns';
-import { GENDER_OPTIONS, useUserTableFilters } from './use-user-table-filters';
+import { User } from '@/lib/typings';
+import { columns } from './columns';
+import { STATUS_OPTIONS, useUserTableFilters } from './use-user-table-filters';
 
 export default function UserTable({
   data,
@@ -16,8 +17,8 @@ export default function UserTable({
   totalData: number;
 }) {
   const {
-    genderFilter,
-    setGenderFilter,
+    statusFilter,
+    setStatusFilter,
     isAnyFilterActive,
     resetFilters,
     searchQuery,
@@ -35,11 +36,11 @@ export default function UserTable({
           setPage={setPage}
         />
         <DataTableFilterBox
-          filterKey="gender"
-          title="Gender"
-          options={GENDER_OPTIONS}
-          setFilterValue={setGenderFilter}
-          filterValue={genderFilter}
+          filterKey="status"
+          title="Status"
+          options={STATUS_OPTIONS}
+          setFilterValue={setStatusFilter}
+          filterValue={statusFilter}
         />
         <DataTableResetFilter
           isFilterActive={isAnyFilterActive}
