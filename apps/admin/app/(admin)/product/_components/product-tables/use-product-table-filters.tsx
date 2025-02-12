@@ -1,6 +1,6 @@
 'use client';
 
-import { searchParams } from '@/lib/searchparams';
+import { productSearchParams } from '@/lib/searchparams';
 import { useQueryState } from 'nuqs';
 import { useCallback, useMemo } from 'react';
 
@@ -17,19 +17,21 @@ export const CATEGORY_OPTIONS = [
 export function useProductTableFilters() {
   const [searchQuery, setSearchQuery] = useQueryState(
     'q',
-    searchParams.q
+    productSearchParams.q
       .withOptions({ shallow: false, throttleMs: 1000 })
       .withDefault('')
   );
 
   const [categoriesFilter, setCategoriesFilter] = useQueryState(
     'categories',
-    searchParams.categories.withOptions({ shallow: false }).withDefault('')
+    productSearchParams.categories
+      .withOptions({ shallow: false })
+      .withDefault('')
   );
 
   const [page, setPage] = useQueryState(
     'page',
-    searchParams.page.withDefault(1)
+    productSearchParams.page.withDefault(1)
   );
 
   const resetFilters = useCallback(() => {
