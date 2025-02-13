@@ -1,21 +1,26 @@
 'use client';
 
+import { useUsers } from '@/hooks/use-users';
 import { DataTable } from '@/components/ui/table/data-table';
 import { DataTableFilterBox } from '@/components/ui/table/data-table-filter-box';
 import { DataTableResetFilter } from '@/components/ui/table/data-table-reset-filter';
 import { DataTableSearch } from '@/components/ui/table/data-table-search';
-import { NormalUser } from '@/constants/data';
 import { User } from '@/lib/typings';
 import { columns } from './columns';
 import { STATUS_OPTIONS, useUserTableFilters } from './use-user-table-filters';
+import Loading from '@/components/common/Loading';
 
-export default function UserTable({
-  data,
-  totalData
-}: {
-  data: NormalUser[];
-  totalData: number;
-}) {
+type TableProps = {
+  filters: {
+    page?: number;
+    limit?: number;
+    search?: string;
+  };
+};
+
+export default function UserTable({ filters }: TableProps) {
+  const { data, isLoading, error } = useUsers(filters);
+
   const {
     statusFilter,
     setStatusFilter,
@@ -25,6 +30,9 @@ export default function UserTable({
     setPage,
     setSearchQuery
   } = useUserTableFilters();
+
+  if (isLoading) return <Loading />;
+  if (error) return <div>Failed to load users</div>;
 
   return (
     <div className="space-y-4">
@@ -47,7 +55,12 @@ export default function UserTable({
           onReset={resetFilters}
         />
       </div>
-      <DataTable columns={columns} data={data} totalItems={totalData} />
+      <DataTable
+        columns={columns}
+        data={data.data.records}
+        totalItems={data.data.total}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

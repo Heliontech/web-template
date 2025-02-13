@@ -1,3 +1,5 @@
+import { ITableParams } from '@/lib/typings';
+import { catchORMError } from '@/lib/utils';
 import { prisma, catchPrismaError } from '@pt/db';
 import bcrypt from 'bcryptjs';
 import { nanoid } from 'nanoid';
@@ -133,3 +135,66 @@ export async function authenticateUser(credentials: {
     await prisma.$disconnect();
   }
 }
+
+export const getUsers = async ({
+  page,
+  pageSize,
+  search,
+  sortField,
+  sortOrder
+}: ITableParams) => {
+  try {
+    const skip = (page - 1) * pageSize;
+    const take = pageSize;
+    const records = await prisma.user.findMany({
+      where: search,
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        status: true,
+        roles: {
+          select: {
+            // who assigned this role and when
+            assigned_at: true,
+            assigned_by: true,
+            role: {
+              select: {
+                name: true
+              }
+            }
+          }
+        },
+        created_at: true,
+        updated_at: true
+      },
+      orderBy: {
+        [sortField]: sortOrder
+      },
+      skip: skip,
+      take: take
+    });
+
+    const total = await prisma.user.count({ where: search });
+    // const totalPages = Math.ceil(total / pageSize);
+    return {
+      meta: {
+        code: 'OK'
+      },
+      data: {
+        records,
+        total,
+        // totalPages,
+        pagination: {
+          total,
+          pageSize,
+          page
+        }
+      }
+    };
+  } catch (err) {
+    return catchORMError('Failed to get users', err);
+  } finally {
+    await prisma.$disconnect();
+  }
+};

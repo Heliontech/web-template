@@ -1,10 +1,10 @@
 'use client';
 import { Checkbox } from '@/components/ui/checkbox';
-import { NormalUser } from '@/constants/data';
+import { User } from '@/lib/typings';
 import { ColumnDef } from '@tanstack/react-table';
 import { CellAction } from './cell-action';
 
-export const columns: ColumnDef<NormalUser>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -25,27 +25,30 @@ export const columns: ColumnDef<NormalUser>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'first_name',
-    header: 'NAME'
-  },
-  {
-    accessorKey: 'country',
-    header: 'COUNTRY'
+    accessorKey: 'username',
+    header: 'Name'
   },
   {
     accessorKey: 'email',
-    header: 'EMAIL'
+    header: 'Email'
   },
   {
-    accessorKey: 'job',
-    header: 'COMPANY'
+    accessorKey: 'status',
+    header: 'Status'
   },
   {
-    accessorKey: 'gender',
-    header: 'GENDER'
+    accessorKey: 'roles[0].role.name',
+    header: 'Role',
+    cell: ({ row }) => row.original.roles?.[0]?.role?.name || 'N/A'
+  },
+  {
+    accessorKey: 'created_at',
+    header: 'Created At',
+    cell: ({ row }) => new Date(row.original.created_at).toLocaleDateString()
   },
   {
     id: 'actions',
+    header: 'Actions',
     cell: ({ row }) => <CellAction data={row.original} />
   }
 ];

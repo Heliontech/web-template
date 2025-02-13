@@ -1,8 +1,6 @@
 import PageContainer from '@/components/layout/page-container';
 import { buttonVariants } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { NormalUser } from '@/constants/data';
-import { fakeUsers } from '@/constants/mock-api';
 import { userSearchParamsCache } from '@/lib/searchparams';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
@@ -15,20 +13,23 @@ export default async function ListingPage({}: TUserListingPage) {
   // Showcasing the use of search params cache in nested RSCs
   const page = userSearchParamsCache.get('page');
   const search = userSearchParamsCache.get('q');
-  const status = userSearchParamsCache.get('status');
+  // const status = userSearchParamsCache.get('status');
   const pageLimit = userSearchParamsCache.get('limit');
 
   const filters = {
     page,
     limit: pageLimit,
-    ...(search && { search }),
-    ...(status && { status })
+    ...(search && { search })
+    // ...(status && { status })
   };
 
   // mock api call
-  const data = await fakeUsers.getUsers(filters);
-  const totalUsers = data.total_users;
-  const user: NormalUser[] = data.users;
+  // const data = await fakeUsers.getUsers(filters);
+  // const totalUsers = data.total_users;
+  // const user: NormalUser[] = data.users;
+  // const { data, isLoading, error } = useUsers(filters);
+
+  // if (error) return <div>Failed to load users</div>;
 
   return (
     <PageContainer scrollable>
@@ -42,7 +43,12 @@ export default async function ListingPage({}: TUserListingPage) {
           </Link>
         </div>
         <Separator />
-        <UserTable data={user} totalData={totalUsers} />
+        {/* <UserTable
+          data={data.data.records}
+          totalData={data.data.total}
+          isLoading={isLoading}
+        /> */}
+        <UserTable filters={filters} />
       </div>
     </PageContainer>
   );
