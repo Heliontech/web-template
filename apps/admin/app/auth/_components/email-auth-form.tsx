@@ -14,7 +14,7 @@ import { signIn } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useTransition } from 'react';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import * as z from 'zod';
 import GithubSignInButton from './github-auth-button';
 
