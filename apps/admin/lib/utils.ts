@@ -1,31 +1,34 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Active, DataRef, Over } from '@dnd-kit/core';
-import { ColumnDragData } from '@/app/kanban/_components/board-column';
-import { TaskDragData } from '@/app/kanban/_components/task-card';
-
-type DraggableData = ColumnDragData | TaskDragData;
+import { Prisma } from '@pt/db';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function hasDraggableData<T extends Active | Over>(
-  entry: T | null | undefined
-): entry is T & {
-  data: DataRef<DraggableData>;
-} {
-  if (!entry) {
-    return false;
+/**
+ * Catch prisma ORM error
+ * @param defaultMsg
+ * @param err
+ * @returns {IApiRes}
+ */
+export function catchORMError(defaultMsg: string, err?: unknown) {
+  // type narrowing
+  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+    return {
+      meta: {
+        code: 'ERROR',
+        message: err.message
+      }
+    };
   }
 
-  const data = entry.data.current;
-
-  if (data?.type === 'Column' || data?.type === 'Task') {
-    return true;
-  }
-
-  return false;
+  return {
+    meta: {
+      code: 'ERROR',
+      message: defaultMsg
+    }
+  };
 }
 
 export function formatBytes(
@@ -44,4 +47,38 @@ export function formatBytes(
   return `${(bytes / Math.pow(1024, i)).toFixed(decimals)} ${
     sizeType === 'accurate' ? accurateSizes[i] ?? 'Bytest' : sizes[i] ?? 'Bytes'
   }`;
+}
+
+export function convertSortParams(sortOrder: string | null) {
+  if (sortOrder === 'ascend') {
+    return 'asc';
+  } else if (sortOrder === 'descend') {
+    return 'desc';
+  }
+}
+
+export function convertSearchParamsToWhereClause(
+  searchParams: URLSearchParams
+) {
+  // Parse the search parameters
+  const search: Record<string, string> = {};
+  searchParams.forEach((value, key) => {
+    if (key.startsWith('search[') && key.endsWith(']')) {
+      const fieldName = key.slice(7, -1); // Extract the field name between 'search[' and ']'
+      search[fieldName] = value;
+    }
+  });
+
+  const whereClause = Object.keys(search).reduce(
+    (acc, key) => {
+      acc[key] = {
+        contains: search[key]
+        // mode: "insensitive", // Optional: case-insensitive search
+      };
+      return acc;
+    },
+    {} as Record<string, any>
+  );
+
+  return whereClause;
 }
