@@ -47,24 +47,23 @@ export default async function SignInViewPage() {
             </p>
           </div>
 
-          <Tabs defaultValue="email" className="space-y-6">
+          <Tabs defaultValue="credentials" className="space-y-6">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="email">
-                <Mail className="mr-2 h-4 w-4" />
-                {t('with_email')}
-              </TabsTrigger>
               <TabsTrigger value="credentials">
                 <Lock className="mr-2 h-4 w-4" />
                 {t('with_password')}
               </TabsTrigger>
+              <TabsTrigger value="email">
+                <Mail className="mr-2 h-4 w-4" />
+                {t('with_email')}
+              </TabsTrigger>
             </TabsList>
-
-            <TabsContent value="email">
-              <EmailAuthForm translations={emailFormTranslations} />
-            </TabsContent>
 
             <TabsContent value="credentials">
               <UserAuthForm translations={userFormTranslations} />
+            </TabsContent>
+            <TabsContent value="email">
+              <EmailAuthForm translations={emailFormTranslations} />
             </TabsContent>
           </Tabs>
 

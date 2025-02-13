@@ -1,8 +1,10 @@
 import { NextAuthConfig } from 'next-auth';
 import CredentialProvider from 'next-auth/providers/credentials';
 import GithubProvider from 'next-auth/providers/github';
+import { authenticateUser } from '@/models/user';
+import { loginUserSchema } from '@/lib/schema';
 
-const authConfig = {
+const authConfig: NextAuthConfig = {
   providers: [
     GithubProvider({
       clientId: process.env.GITHUB_ID ?? '',
@@ -10,27 +12,33 @@ const authConfig = {
     }),
     CredentialProvider({
       credentials: {
-        email: {
-          type: 'email'
-        },
+        email: { type: 'text', placeholder: 'Please input your email' },
         password: {
-          type: 'password'
+          type: 'password',
+          placeholder: 'Please input your password'
         }
       },
-      async authorize(credentials, req) {
-        const user = {
-          id: '1',
-          name: 'Henry',
-          email: credentials?.email as string
-        };
-        if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user;
-        } else {
-          // If you return null then an error will be displayed advising the user to check their details.
-          return null;
+      // async authorize(credentials, req) {
+      async authorize(credentials) {
+        try {
+          const validation = loginUserSchema.safeParse(credentials);
+          if (!validation.success) {
+            throw new Error('Invalid credentials');
+          }
 
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
+          // const { email, password } = loginUserSchema.parse(credentials);
+          const user = await authenticateUser(credentials as any);
+          if (user) {
+            // Any object returned will be saved in `user` property of the JWT
+            return user;
+          } else {
+            // If you return null or false then the credentials will be rejected
+            return null;
+          }
+        } catch (err) {
+          // TODO
+          // Log to monitor platform
+          return null;
         }
       }
     })

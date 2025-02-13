@@ -79,3 +79,57 @@ export const createUser = async ({
     );
   }
 };
+
+/**
+ * Authenticate user
+ * @param {Object} payload - The user information
+ * @param {string} payload.email - The user's email
+ * @param {string} payload.username - The user's username
+ * @param {string} payload.password - The user's password
+ * @returns {Promise<Object>} The authenticated user or null
+ */
+export async function authenticateUser(credentials: {
+  username: string;
+  email?: string;
+  password: string;
+}) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: credentials.email as string },
+      select: {
+        id: true,
+        username: true,
+        password: true,
+        email: true,
+        image: true,
+        roles: {
+          select: {
+            role: {
+              select: {
+                name: true
+              }
+            }
+          }
+        }
+      }
+    });
+
+    if (!user) return null;
+
+    const isPasswordValid = await bcrypt.compare(
+      credentials.password as string,
+      user.password
+    );
+
+    if (!isPasswordValid) return null;
+
+    return {
+      ...user,
+      roles: user.roles.map((role) => role.role.name)
+    };
+  } catch (err) {
+    return null;
+  } finally {
+    await prisma.$disconnect();
+  }
+}

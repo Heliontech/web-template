@@ -27,3 +27,15 @@ export const registerUserSchema = z.object({
     ),
   password: z.string().min(6, 'Password should be minimum 6 characters')
 });
+
+export const loginUserSchema = z.object({
+  username: z.string().optional(),
+  email: z
+    .string()
+    .regex(
+      /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
+      'Invalid email'
+    )
+    .optional(),
+  password: z.string().min(6, 'Password should be minimum 6 characters')
+});
