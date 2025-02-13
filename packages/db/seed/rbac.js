@@ -23,7 +23,7 @@ async function main() {
       }),
       prisma.role.create({
         data: {
-          name: "admin",
+          name: "user",
           description: "Regular user role",
           created_by: "system",
         },
