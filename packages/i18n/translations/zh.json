@@ -134,9 +134,12 @@
       "confirm": "Confirm"
     },
     "menu": {
+      "home": "首页",
+      "product": "产品",
+      "about": "关于",
       "blog": "博客",
       "changelog": "更新日志",
-      "contact": "联系我们",
+      "contact": "联系",
       "dashboard": "仪表盘",
       "docs": "文档",
       "faq": "常见问题",

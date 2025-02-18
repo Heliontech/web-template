@@ -134,6 +134,9 @@
 			"confirm": "Confirm"
 		},
 		"menu": {
+			"home": "Home",
+			"product": "Product",
+			"about": "About",
 			"blog": "Blog",
 			"changelog": "Changelog",
 			"contact": "Contact",

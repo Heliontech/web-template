@@ -51,20 +51,16 @@ export function NavBar() {
     href: string;
   }[] = [
     {
-      label: t("common.menu.pricing"),
-      href: "/#pricing",
+      label: t("common.menu.home"),
+      href: "/",
     },
     {
-      label: t("common.menu.faq"),
-      href: "/home#faq",
+      label: t("common.menu.product"),
+      href: "/products",
     },
     {
-      label: t("common.menu.blog"),
-      href: "/blog",
-    },
-    {
-      label: t("common.menu.changelog"),
-      href: "/changelog",
+      label: t("common.menu.about"),
+      href: "/about",
     },
     ...(config.contactForm.enabled
       ? [
@@ -75,8 +71,8 @@ export function NavBar() {
         ]
       : []),
     {
-      label: t("common.menu.docs"),
-      href: "/docs",
+      label: t("common.menu.faq"),
+      href: "/home#faq",
     },
   ];
 
