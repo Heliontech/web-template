@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
 import Link from 'next/link';
 import UserTable from './user-tables';
+import { Heading } from '@/components/ui/heading';
 
 type TUserListingPage = {};
 
@@ -34,9 +35,10 @@ export default async function ListingPage({}: TUserListingPage) {
   return (
     <PageContainer scrollable>
       <div className="space-y-4">
-        <div className="flex items-start justify-end">
+        <div className="flex items-start justify-between">
+          <Heading title="Users" description="" />
           <Link
-            href={'/user/new'}
+            href={'/users/new'}
             className={cn(buttonVariants({ variant: 'default', size: 'sm' }))}
           >
             <Plus className="size-4" /> Add New

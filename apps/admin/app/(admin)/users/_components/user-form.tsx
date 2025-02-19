@@ -13,53 +13,98 @@ import {
   FormMessage
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from '@/components/ui/select';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { createUser, updateUser } from '../_actions/user';
+import { User } from '@pt/db';
 
-const formSchema = z.object({
-  name: z.string().min(2, {
-    message: 'Name must be at least 2 characters.'
-  }),
-  country: z.string({
-    required_error: 'Please select a country.'
-  }),
-  email: z.string().email({
-    message: 'Please enter a valid email address.'
-  }),
-  company: z.string().min(1, {
-    message: 'Company name is required.'
-  }),
-  gender: z.enum(['male', 'female', 'other'], {
-    required_error: 'Please select a gender.'
-  })
-});
+interface UserFormProps {
+  initialData?: User;
+}
 
-export default function UserForm() {
+// use factory method to create schema
+const createFormSchema = (isEditing: boolean) =>
+  z
+    .object({
+      username: z.string().min(3, {
+        message: 'Username must be at least 3 characters.'
+      }),
+      email: z.string().email({
+        message: 'Please enter a valid email address.'
+      }),
+      ...(isEditing
+        ? {}
+        : {
+            password: z
+              .string()
+              .min(6)
+              .regex(/[A-Z]/)
+              .regex(/[a-z]/)
+              .regex(/[0-9]/, {
+                message:
+                  'Password must be at least 6 characters and contain uppercase, lowercase and number.'
+              }),
+            password_confirmation: z.string()
+          })
+    })
+    .refine(
+      (data) => {
+        if (!isEditing) {
+          return data.password === data.password_confirmation;
+        }
+        return true;
+      },
+      {
+        message: "Passwords don't match",
+        path: ['password_confirmation']
+      }
+    );
+
+type FormValues = z.infer<ReturnType<typeof createFormSchema>>;
+
+export default function UserForm({ initialData }: UserFormProps) {
   const router = useRouter();
+  const [loading, setLoading] = React.useState(false);
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<FormValues>({
+    resolver: zodResolver(createFormSchema(!!initialData)),
     defaultValues: {
-      name: '',
-      country: '',
-      email: '',
-      company: '',
-      gender: undefined
+      username: initialData?.username || '',
+      email: initialData?.email || '',
+      ...(initialData
+        ? {}
+        : {
+            password: '',
+            password_confirmation: ''
+          })
     }
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
+  async function onSubmit(
+    values: z.infer<ReturnType<typeof createFormSchema>>
+  ) {
+    try {
+      setLoading(true);
+      if (initialData) {
+        await updateUser(initialData.id, values);
+        toast.success('User updated successfully');
+      } else {
+        // use destructuring to remove password_confirmation
+        const { password_confirmation, ...createData } = values;
+        await createUser(createData);
+        toast.success('User created successfully');
+      }
+      router.push('/users');
+      router.refresh();
+    } catch (error) {
+      console.log(error);
+      toast.error('Something went wrong');
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -70,55 +115,25 @@ export default function UserForm() {
           Back
         </Button>
       </div>
-      <Card className="mx-auto w-full">
+      <Card className="mx-auto w-full max-w-2xl">
         <CardHeader>
           <CardTitle className="text-left text-2xl font-bold">
-            User Information
+            {initialData ? 'Edit User' : 'Create User'}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <div className="grid grid-cols-1 gap-4">
                 <FormField
                   control={form.control}
-                  name="name"
+                  name="username"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Name</FormLabel>
+                      <FormLabel>Username</FormLabel>
                       <FormControl>
-                        <Input placeholder="Enter your name" {...field} />
+                        <Input placeholder="Enter username" {...field} />
                       </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="country"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Country</FormLabel>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <FormControl>
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select a country" />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent>
-                          <SelectItem value="usa">USA</SelectItem>
-                          <SelectItem value="uk">UK</SelectItem>
-                          <SelectItem value="canada">Canada</SelectItem>
-                          <SelectItem value="australia">Australia</SelectItem>
-                          <SelectItem value="germany">Germany</SelectItem>
-                          <SelectItem value="france">France</SelectItem>
-                          <SelectItem value="japan">Japan</SelectItem>
-                          <SelectItem value="brazil">Brazil</SelectItem>
-                        </SelectContent>
-                      </Select>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -132,7 +147,7 @@ export default function UserForm() {
                       <FormControl>
                         <Input
                           type="email"
-                          placeholder="Enter your email"
+                          placeholder="Enter email"
                           {...field}
                         />
                       </FormControl>
@@ -140,57 +155,62 @@ export default function UserForm() {
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name="company"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Company</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Enter your company" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
-              <FormField
-                control={form.control}
-                name="gender"
-                render={({ field }) => (
-                  <FormItem className="space-y-3">
-                    <FormLabel>Gender</FormLabel>
-                    <FormControl>
-                      <RadioGroup
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        className="flex space-x-4"
-                      >
-                        <FormItem className="flex items-center space-x-2">
+                {!initialData && (
+                  <>
+                    <FormField
+                      control={form.control}
+                      name="password"
+                      render={({ field }: any) => (
+                        <FormItem>
+                          <FormLabel>Password</FormLabel>
                           <FormControl>
-                            <RadioGroupItem value="male" />
+                            <Input
+                              type="password"
+                              placeholder="Enter password"
+                              {...field}
+                            />
                           </FormControl>
-                          <FormLabel className="font-normal">Male</FormLabel>
+                          <FormMessage />
                         </FormItem>
-                        <FormItem className="flex items-center space-x-2">
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name="password_confirmation"
+                      render={({ field }: any) => (
+                        <FormItem>
+                          <FormLabel>Confirm Password</FormLabel>
                           <FormControl>
-                            <RadioGroupItem value="female" />
+                            <Input
+                              type="password"
+                              placeholder="Confirm password"
+                              {...field}
+                            />
                           </FormControl>
-                          <FormLabel className="font-normal">Female</FormLabel>
+                          <FormMessage />
                         </FormItem>
-                        <FormItem className="flex items-center space-x-2">
-                          <FormControl>
-                            <RadioGroupItem value="other" />
-                          </FormControl>
-                          <FormLabel className="font-normal">Other</FormLabel>
-                        </FormItem>
-                      </RadioGroup>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
+                      )}
+                    />
+                  </>
                 )}
-              />
-              <Button type="submit">Submit</Button>
+                <div className="flex items-center justify-end space-x-4 pt-4">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    disabled={loading}
+                    onClick={() => router.back()}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" disabled={loading}>
+                    {loading
+                      ? 'Loading...'
+                      : initialData
+                      ? 'Save changes'
+                      : 'Create user'}
+                  </Button>
+                </div>
+              </div>
             </form>
           </Form>
         </CardContent>
