@@ -14,16 +14,29 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from '@/components/ui/select';
 
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { createUser, updateUser } from '../_actions/user';
-import { User } from '@pt/db';
+import { User, RolesOnUsers } from '@pt/db';
 
 interface UserFormProps {
-  initialData?: User;
+  initialData?: User & { roles: RolesOnUsers[] };
 }
+
+// 添加角色常量
+const USER_ROLES = [
+  { label: 'Admin', value: 'admin' },
+  { label: 'User', value: 'user' }
+] as const;
 
 // use factory method to create schema
 const createFormSchema = (isEditing: boolean) =>
@@ -35,6 +48,7 @@ const createFormSchema = (isEditing: boolean) =>
       email: z.string().email({
         message: 'Please enter a valid email address.'
       }),
+      role: z.enum(['admin', 'user']),
       ...(isEditing
         ? {}
         : {
@@ -74,6 +88,10 @@ export default function UserForm({ initialData }: UserFormProps) {
     defaultValues: {
       username: initialData?.username || '',
       email: initialData?.email || '',
+      role:
+        initialData?.roles?.map(
+          (r: any) => r.role.name as 'admin' | 'user'
+        )[0] || 'user',
       ...(initialData
         ? {}
         : {
@@ -154,6 +172,42 @@ export default function UserForm({ initialData }: UserFormProps) {
                       <FormMessage />
                     </FormItem>
                   )}
+                />
+                <FormField
+                  control={form.control}
+                  name="role"
+                  // defaultValue={
+                  //   initialData?.roles.map((r: any) => r.role.name)[0]
+                  // }
+                  render={({ field }) => {
+                    return (
+                      <FormItem>
+                        <FormLabel>Role</FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={
+                            initialData?.roles.map(
+                              (r: any) => r.role.name
+                            )[0] || 'user'
+                          }
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a role" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {USER_ROLES.map((role) => (
+                              <SelectItem key={role.value} value={role.value}>
+                                {role.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    );
+                  }}
                 />
                 {!initialData && (
                   <>
